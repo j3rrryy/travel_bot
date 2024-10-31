@@ -119,7 +119,7 @@ volumes:
       container_name: redis_bot
     ```
 
-- :hammer_and_wrench: Начало работы
+- :hammer_and_wrench: **Начало работы**
 
   - Создайте Telegram бота с помощью [@BotFather](https://t.me/BotFather) и получите токен
   - Зарегистрируйтесь в [Openrouteservice](https://openrouteservice.org) и получите токен
