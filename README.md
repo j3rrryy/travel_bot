@@ -1,8 +1,16 @@
 # Aiogram [@Travel Agent Bot](https://t.me/TravelAgent3Bot)
 
-![Python: 3.12](https://img.shields.io/badge/Python-3.12-FFD64E.svg)
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![Code style: black](<https://img.shields.io/badge/code%20style-black-000000.svg>)
+<p align="center">
+  <a href="https://www.python.org/downloads/release/python-3120/">
+    <img src="https://img.shields.io/badge/Python-3.12-FFD64E.svg" alt="Python 3.12">
+  </a>
+  <a href="https://github.com/j3rrryy/school_464/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License">
+  </a>
+  <a href="https://github.com/psf/black">
+    <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Black formatter">
+  </a>
+</p>
 
 ## :scroll: О боте
 
