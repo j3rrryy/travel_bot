@@ -12,7 +12,6 @@ services:
       - .env
     volumes:
       - files:/files
-      - ./:/app
     depends_on:
       - postgres
       - redis
