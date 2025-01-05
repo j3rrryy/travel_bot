@@ -1,14 +1,15 @@
 # Aiogram [@Travel Agent Bot](https://t.me/TravelAgent3Bot)
 
 <p align="center">
+  <img src="https://github.com/j3rrryy/travel_bot/actions/workflows/main.yml/badge.svg">
   <a href="https://www.python.org/downloads/release/python-3120/">
     <img src="https://img.shields.io/badge/Python-3.12-FFD64E.svg" alt="Python 3.12">
   </a>
-  <a href="https://github.com/j3rrryy/school_464/blob/main/LICENSE">
+  <a href="https://github.com/j3rrryy/travel_bot/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License">
   </a>
-  <a href="https://github.com/psf/black">
-    <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Black formatter">
+  <a href="https://github.com/astral-sh/ruff">
+    <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff">
   </a>
 </p>
 
