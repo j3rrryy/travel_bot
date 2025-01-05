@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 from datetime import datetime as dt
 
@@ -35,6 +36,7 @@ from src.lexicon import CURRENCY_DICT, ERROR_LEXICON_RU, LEXICON_RU
 from src.services import create_currency_info
 from src.states import FSMCurrency
 
+logger = logging.getLogger()
 utils_router = Router()
 config = load_config()
 semaphore = config.bot.semaphore
@@ -90,9 +92,11 @@ async def route(
             ERROR_LEXICON_RU["NoLocationsError"],
             reply_markup=back_to_locations_kb(trip_id),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -145,7 +149,8 @@ async def weather(
                 location_longitude,
             ),
         )
-    except ServiceConnectionError:
+    except ServiceConnectionError as e:
+        logger.exception(e)
         await callback.message.edit_text(
             ERROR_LEXICON_RU["ServiceConnectionError"],
             reply_markup=back_to_location_kb(
@@ -154,9 +159,11 @@ async def weather(
                 location_longitude,
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -194,7 +201,8 @@ async def landmarks(
             ),
         )
 
-    except ServiceConnectionError:
+    except ServiceConnectionError as e:
+        logger.exception(e)
         await callback.message.edit_text(
             ERROR_LEXICON_RU["ServiceConnectionError"],
             reply_markup=base_location_kb(
@@ -204,9 +212,11 @@ async def landmarks(
                 user["username"] == trip["username"],
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -228,7 +238,8 @@ async def convert_user_currency(
             LEXICON_RU["select_currency"], reply_markup=set_currency_kb()
         )
         await state.set_state(FSMCurrency.select_currency)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -249,7 +260,8 @@ async def conversion_currency(callback: CallbackQuery, user: dict, state: FSMCon
             base_currency=user["currency"], convert_to=callback.data
         )
         await state.set_state(FSMCurrency.set_amount)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -271,9 +283,11 @@ async def enter_currency_amount(message: Message, state: FSMContext):
         await message.answer(create_currency_info(converted))
         await state.clear()
 
-    except ServiceConnectionError:
+    except ServiceConnectionError as e:
+        logger.exception(e)
         await message.answer(ERROR_LEXICON_RU["ServiceConnectionError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await message.answer(ERROR_LEXICON_RU["incorrect_data"])
 
 

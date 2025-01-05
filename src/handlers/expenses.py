@@ -1,3 +1,4 @@
+import logging
 from asyncio import sleep
 from random import choice
 
@@ -39,6 +40,7 @@ from src.lexicon import ERROR_LEXICON_RU, KB_LEXICON_RU, LEXICON_RU
 from src.services import create_debtor_info, create_expense_info, debtor_message
 from src.states import FSMExpense
 
+logger = logging.getLogger()
 expense_router = Router()
 
 
@@ -66,9 +68,11 @@ async def expenses(
                 )
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -89,7 +93,8 @@ async def new_expense(callback: CallbackQuery, user: dict, state: FSMContext):
             trip_id=int(data[1]), username=user["username"], currency=user["currency"]
         )
         await state.set_state(FSMExpense.set_name)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -107,7 +112,8 @@ async def expense_name(message: Message, state: FSMContext):
         await message.answer(LEXICON_RU["expense_cost"])
         await state.update_data(name=message.text)
         await state.set_state(FSMExpense.set_cost)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -128,7 +134,8 @@ async def expense_cost(message: Message, state: FSMContext):
         await state.set_state(FSMExpense.set_debtors)
     except ValueError:
         await message.answer(ERROR_LEXICON_RU["incorrect_data"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -166,7 +173,8 @@ async def expense_debtors(
                         debtor_message(user["username"], trip_name, data["name"]),
                         reply_markup=my_trips_kb(),
                     )
-                except Exception:
+                except Exception as e:
+                    logger.exception(e)
                     pass
         else:
             await message.answer(ERROR_LEXICON_RU["incorrect_data"])
@@ -175,10 +183,12 @@ async def expense_debtors(
         await message.answer(ERROR_LEXICON_RU["UserInListNotFoundError"])
     except UserNotInTripError:
         await message.answer(ERROR_LEXICON_RU["UserNotInTripError"])
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -213,9 +223,11 @@ async def expense(
                 expense_id,
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -234,7 +246,8 @@ async def new_debtor(callback: CallbackQuery, state: FSMContext):
         await callback.message.edit_text(LEXICON_RU["new_debtor"])
         await state.update_data(expense_id=int(data[1]))
         await state.set_state(FSMExpense.add_debtor)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -268,7 +281,8 @@ async def add_debtor(
                     debtor_message(user["username"], trip_name, data["name"]),
                     reply_markup=my_trips_kb(),
                 )
-            except Exception:
+            except Exception as e:
+                logger.exception(e)
                 pass
         else:
             await message.answer(ERROR_LEXICON_RU["incorrect_data"])
@@ -277,10 +291,12 @@ async def add_debtor(
         await message.answer(ERROR_LEXICON_RU["UserInListNotFoundError"])
     except UserNotInTripError:
         await message.answer(ERROR_LEXICON_RU["UserNotInTripError"])
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -306,7 +322,8 @@ async def edit_expense(callback: CallbackQuery, user: dict, state: FSMContext):
             currency=user["currency"],
         )
         await state.set_state(FSMExpense.edit_name)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -326,7 +343,8 @@ async def edit_name(message: Message, state: FSMContext):
 
         await message.answer(LEXICON_RU["edit_cost"], reply_markup=leave_same_kb())
         await state.set_state(FSMExpense.edit_cost)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -360,10 +378,12 @@ async def edit_cost(
         await state.clear()
     except ValueError:
         await message.answer(ERROR_LEXICON_RU["incorrect_data"])
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -384,7 +404,8 @@ async def expense_game(callback: CallbackQuery):
             LEXICON_RU["play_game"],
             reply_markup=play_kb(int(data[1]), int(data[-2])),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -413,7 +434,8 @@ async def play_expense_game(
             reply_markup=back_to_expenses_kb(int(data[1])),
         )
         await loser_db(loser, expense_id, sessionmaker)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -432,7 +454,8 @@ async def pre_delete_expense(callback: CallbackQuery):
             LEXICON_RU["confirm_deletion"],
             reply_markup=confirm_expense_deletion_kb(int(data[-3]), int(data[-1])),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -451,9 +474,11 @@ async def finally_delete_expense(
             LEXICON_RU["deletion_done"],
             reply_markup=back_to_expenses_kb(int(data[-1])),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -469,7 +494,8 @@ async def cancel_expense_deletion(callback: CallbackQuery):
             LEXICON_RU["deletion_canceled"],
             reply_markup=back_to_expense_kb(int(data[-1]), int(data[-3])),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -502,11 +528,14 @@ async def get_debtor(
                 expense_db["username"] == user["username"],
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except ServiceConnectionError:
+    except ServiceConnectionError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["ServiceConnectionError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -525,7 +554,8 @@ async def pre_write_off(callback: CallbackQuery):
             LEXICON_RU["confirm_write_off"],
             reply_markup=confirm_write_off_kb(int(data[3]), data[-1]),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.answer(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -555,9 +585,11 @@ async def finally_write_off(
                 LEXICON_RU["write_off_done"],
                 reply_markup=back_to_expense_kb(trip_id, expense_id),
             )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -578,5 +610,6 @@ async def cancel_write_off(
             LEXICON_RU["write_off_canceled"],
             reply_markup=back_to_expense_kb(expense["trip_id"], expense_id),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])

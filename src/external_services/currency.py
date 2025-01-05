@@ -52,5 +52,5 @@ async def convert_currency(
 
         return converted
 
-    except Exception:
-        raise ServiceConnectionError
+    except Exception as e:
+        raise ServiceConnectionError from e

@@ -53,8 +53,8 @@ async def convert_coordinates(
                 return country, place
             else:
                 raise GeocodingError
-    except Exception:
-        raise GeocodingError
+    except Exception as e:
+        raise GeocodingError from e
 
 
 def get_route_photo(
@@ -134,8 +134,8 @@ def get_route_photo(
             fig, f"{os.getcwd()}/files/routes/route-{trip_id}.jpeg", format="jpeg"
         )
 
-    except Exception:
-        raise NavigationError
+    except Exception as e:
+        raise NavigationError from e
 
 
 @cache(ttl="12h")
@@ -178,7 +178,7 @@ async def get_sights_list(
             pre_res += f"\U0001f4cd Адрес: {sight['properties']['address_line2']}\n\n"
             res += pre_res
 
-    except Exception:
-        raise ServiceConnectionError
+    except Exception as e:
+        raise ServiceConnectionError from e
 
     return res

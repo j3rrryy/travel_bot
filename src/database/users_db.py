@@ -32,9 +32,9 @@ async def create_update_user(
                         await session.execute(
                             update(User).filter(User.id == user_id).values(**data)
                         )
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e
 
 
 async def get_user_db(
@@ -53,6 +53,5 @@ async def get_user_db(
                     )
                 ).scalar_one()
                 return user.columns_to_dict()
-            except Exception:
-                await session.rollback()
-                raise DatabaseError
+            except Exception as e:
+                raise DatabaseError from e

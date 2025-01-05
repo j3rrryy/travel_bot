@@ -1,3 +1,5 @@
+import logging
+
 import aiofiles.os as aos
 from aiogram import Bot, F, Router
 from aiogram.filters import StateFilter
@@ -20,6 +22,7 @@ from src.keyboards import (
 from src.lexicon import ERROR_LEXICON_RU, LEXICON_RU
 from src.states import FSMNote
 
+logger = logging.getLogger()
 note_router = Router()
 config = load_config()
 semaphore = config.bot.semaphore
@@ -50,7 +53,8 @@ async def notes(
                 )
             ),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.answer(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -71,7 +75,8 @@ async def new_note(callback: CallbackQuery, state: FSMContext):
         )
         await state.update_data(trip_id=int(data[1]))
         await state.set_state(FSMNote.set_private)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -90,7 +95,8 @@ async def private_note(callback: CallbackQuery, state: FSMContext):
         await callback.message.edit_text(LEXICON_RU["upload_file"])
         await state.update_data(is_private=callback.data)
         await state.set_state(FSMNote.set_note)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -159,10 +165,12 @@ async def upload_note(
         await add_note_db(data, sessionmaker)
         await state.clear()
 
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(
             ERROR_LEXICON_RU["incorrect_file"],
@@ -268,7 +276,8 @@ async def get_note(
                             user["id"] == note["user_id"],
                         ),
                     )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.answer(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -287,7 +296,8 @@ async def pre_delete_note(callback: CallbackQuery):
             LEXICON_RU["confirm_deletion"],
             reply_markup=confirm_note_deletion_kb(int(data[3]), int(data[-1])),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.answer(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -313,9 +323,11 @@ async def finally_delete_note(
             if await aos.path.isfile(path):
                 await aos.remove(path)
 
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -331,5 +343,6 @@ async def cancel_note_deletion(callback: CallbackQuery):
             LEXICON_RU["deletion_canceled"],
             reply_markup=back_to_notes_kb(int(data[2])),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])

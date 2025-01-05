@@ -56,9 +56,9 @@ async def create_update_expense_db(
             except UserNotInTripError:
                 await session.rollback()
                 raise UserNotInTripError
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e
 
 
 async def get_expense_db(
@@ -73,9 +73,8 @@ async def get_expense_db(
             try:
                 expense = await session.get(Expense, expense_id)
                 return expense.columns_to_dict()
-            except Exception:
-                await session.rollback()
-                raise DatabaseError
+            except Exception as e:
+                raise DatabaseError from e
 
 
 async def add_debtor_db(
@@ -117,9 +116,9 @@ async def add_debtor_db(
             except UserNotInTripError:
                 await session.rollback()
                 raise UserNotInTripError
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e
 
 
 async def delete_expense_db(
@@ -133,9 +132,9 @@ async def delete_expense_db(
         async with session.begin():
             try:
                 await session.execute(delete(Expense).filter(Expense.id == expense_id))
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e
 
 
 async def write_off_debt_db(
@@ -168,9 +167,9 @@ async def write_off_debt_db(
                 expense.debtors = debtors
                 return trip_id, False
 
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e
 
 
 async def loser_db(
@@ -194,6 +193,6 @@ async def loser_db(
                 else:
                     expense.debtors = [username]
 
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e

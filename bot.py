@@ -17,7 +17,8 @@ logger = logging.getLogger(__name__)
 async def main() -> None:
     logging.basicConfig(
         level=logging.INFO,
-        format="%(levelname)-6s [%(asctime)s] - %(name)s - %(message)s",
+        format="%(asctime)s | %(levelname)s | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
     logger.info("Starting bot")
 
@@ -25,8 +26,8 @@ async def main() -> None:
     properties = DefaultBotProperties(parse_mode="HTML")
     storage = RedisStorage(redis=Redis(host=config.redis.host, port=config.redis.port))
 
-    bot: Bot = Bot(token=config.bot.token, default=properties)
-    disp: Dispatcher = Dispatcher(storage=storage)
+    bot = Bot(token=config.bot.token, default=properties)
+    disp = Dispatcher(storage=storage)
     disp.include_router(main_router)
 
     await set_main_menu(bot)

@@ -219,6 +219,5 @@ async def get_items(
                         pages = res
 
                 return res, (len(pages) - 1) // 5 if len(pages) >= 1 else 0
-            except Exception:
-                await session.rollback()
-                raise DatabaseError
+            except Exception as e:
+                raise DatabaseError from e

@@ -39,9 +39,9 @@ async def add_friend_db(
             except UserNotFoundError:
                 await session.rollback()
                 raise UserNotFoundError
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e
 
 
 async def remove_friend_db(
@@ -61,6 +61,6 @@ async def remove_friend_db(
                 if username in friends:
                     friends.remove(username)
                 trip.friends = friends
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e

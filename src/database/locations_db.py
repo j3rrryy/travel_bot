@@ -54,9 +54,9 @@ async def add_location_db(
             except LocationExistsError:
                 await session.rollback()
                 raise LocationExistsError
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e
 
 
 async def get_location_db(
@@ -83,9 +83,8 @@ async def get_location_db(
                 )[0]
 
                 return location
-            except Exception:
-                await session.rollback()
-                raise DatabaseError
+            except Exception as e:
+                raise DatabaseError from e
 
 
 async def delete_location_db(
@@ -114,6 +113,6 @@ async def delete_location_db(
                 locations.remove(location)
                 trip.locations = locations
 
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e

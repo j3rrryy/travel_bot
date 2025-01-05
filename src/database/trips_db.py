@@ -32,9 +32,9 @@ async def create_update_trip(
                 else:
                     trip = Trip(**data)
                     session.add(trip)
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e
 
 
 async def get_trip_db(
@@ -49,9 +49,8 @@ async def get_trip_db(
             try:
                 trip = await session.get(Trip, trip_id)
                 return trip.columns_to_dict()
-            except Exception:
-                await session.rollback()
-                raise DatabaseError
+            except Exception as e:
+                raise DatabaseError from e
 
 
 async def delete_trip_db(
@@ -65,6 +64,6 @@ async def delete_trip_db(
         async with session.begin():
             try:
                 await session.execute(delete(Trip).filter(Trip.id == trip_id))
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e

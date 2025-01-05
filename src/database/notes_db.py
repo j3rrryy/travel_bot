@@ -37,9 +37,9 @@ async def add_note_db(
                 )
 
                 session.add(note)
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e
 
 
 async def get_note_db(
@@ -54,9 +54,8 @@ async def get_note_db(
             try:
                 note = await session.get(Note, note_id)
                 return note.columns_to_dict()
-            except Exception:
-                await session.rollback()
-                raise DatabaseError
+            except Exception as e:
+                raise DatabaseError from e
 
 
 async def delete_note_db(
@@ -72,6 +71,6 @@ async def delete_note_db(
                 note = await session.get(Note, note_id)
                 await session.execute(delete(Note).filter(Note.id == note_id))
                 return note.path
-            except Exception:
+            except Exception as e:
                 await session.rollback()
-                raise DatabaseError
+                raise DatabaseError from e

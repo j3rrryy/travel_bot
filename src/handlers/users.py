@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import F, Router
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
@@ -22,6 +24,7 @@ from src.lexicon import CURRENCY_DICT, ERROR_LEXICON_RU, KB_LEXICON_RU, LEXICON_
 from src.services import create_profile
 from src.states import FSMSettings
 
+logger = logging.getLogger()
 user_router = Router()
 config = load_config()
 cache = config.bot.cache
@@ -43,7 +46,8 @@ async def start_command(message: Message, state: FSMContext):
                 id=message.from_user.id, username=message.from_user.username
             )
             await state.set_state(FSMSettings.set_age)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -75,7 +79,8 @@ async def profile_command(message: Message, user: dict | None, state: FSMContext
             await message.answer(ERROR_LEXICON_RU["no_profile"])
 
         await state.clear()
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -99,7 +104,8 @@ async def profile_age(message: Message, state: FSMContext):
 
     except ValueError:
         await message.answer(ERROR_LEXICON_RU["incorrect_data"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -118,7 +124,8 @@ async def profile_sex(callback: CallbackQuery, state: FSMContext):
         )
         await state.update_data(sex=callback.data)
         await state.set_state(FSMSettings.set_location)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -153,7 +160,8 @@ async def profile_location(message: Message, state: FSMContext):
 
     except GeocodingError:
         await message.answer(ERROR_LEXICON_RU["GeocodingError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -172,7 +180,8 @@ async def profile_currency(callback: CallbackQuery, state: FSMContext):
         )
         await state.update_data(currency=callback.data)
         await state.set_state(FSMSettings.set_bio)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -201,9 +210,11 @@ async def profile_bio(
         await message.answer(LEXICON_RU["settings_done"], reply_markup=menu_kb())
         await state.clear()
 
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await message.answer(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -222,7 +233,8 @@ async def edit_profile(callback: CallbackQuery, state: FSMContext):
             id=callback.from_user.id, username=callback.from_user.username
         )
         await state.set_state(FSMSettings.edit_age)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -251,7 +263,8 @@ async def edit_age(message: Message, state: FSMContext):
 
     except ValueError:
         await message.answer(ERROR_LEXICON_RU["incorrect_data"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -272,7 +285,8 @@ async def edit_sex(message: Message, state: FSMContext):
             reply_markup=leave_same_kb(with_location=True),
         )
         await state.set_state(FSMSettings.edit_location)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -315,7 +329,8 @@ async def edit_location(message: Message, state: FSMContext):
 
     except GeocodingError:
         await message.answer(ERROR_LEXICON_RU["GeocodingError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -338,7 +353,8 @@ async def edit_currency(message: Message, state: FSMContext):
             LEXICON_RU["edit_bio"], reply_markup=leave_same_kb(with_blank=True)
         )
         await state.set_state(FSMSettings.edit_bio)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -381,7 +397,9 @@ async def edit_bio(
         )
         await state.clear()
 
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await message.answer(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await message.answer(ERROR_LEXICON_RU["InternalError"])

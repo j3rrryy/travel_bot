@@ -1,3 +1,4 @@
+import logging
 from datetime import date
 from datetime import datetime as dt
 
@@ -35,6 +36,7 @@ from src.lexicon import ERROR_LEXICON_RU, LEXICON_RU
 from src.services import create_location_info
 from src.states import FSMLocation
 
+logger = logging.getLogger()
 location_router = Router()
 config = load_config()
 semaphore = config.bot.semaphore
@@ -71,7 +73,8 @@ async def locations(
                 )
             ),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.answer(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -90,7 +93,8 @@ async def new_location(callback: CallbackQuery, state: FSMContext):
         await callback.message.edit_text(LEXICON_RU["new_location"])
         await state.update_data(trip_id=int(data[1]))
         await state.set_state(FSMLocation.add_geo)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -130,7 +134,8 @@ async def location_geo(message: Message, user: dict, state: FSMContext):
         await message.answer(ERROR_LEXICON_RU["IsStartPointError"])
     except GeocodingError:
         await message.answer(ERROR_LEXICON_RU["GeocodingError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -181,10 +186,12 @@ async def location_dates(
             ERROR_LEXICON_RU["LocationExistsError"],
             reply_markup=base_locations_kb(trip_id),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await message.answer(ERROR_LEXICON_RU["incorrect_data"])
 
 
@@ -225,9 +232,11 @@ async def get_location(
                 user["username"] == trip["username"],
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -253,7 +262,8 @@ async def pre_delete_location(callback: CallbackQuery):
                 location_longitude,
             ),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -288,9 +298,11 @@ async def finally_delete_location(
             if await aos.path.isfile(route_photo.path):
                 await aos.remove(route_photo.path)
 
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -306,5 +318,6 @@ async def cancel_location_deletion(callback: CallbackQuery):
             LEXICON_RU["deletion_canceled"],
             reply_markup=back_to_locations_kb(int(data[2])),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])

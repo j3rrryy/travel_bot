@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Bot, F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
@@ -21,6 +23,7 @@ from src.lexicon import ERROR_LEXICON_RU, LEXICON_RU
 from src.services import create_profile, invite_message
 from src.states import FSMFriend
 
+logger = logging.getLogger()
 friend_router = Router()
 
 
@@ -55,9 +58,11 @@ async def friends(
                 )
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -75,7 +80,8 @@ async def invite_friend(callback: CallbackQuery, state: FSMContext):
         await callback.message.edit_text(LEXICON_RU["add_friend"])
         await state.update_data(trip_id=int(data[1]))
         await state.set_state(FSMFriend.add_friend)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -111,7 +117,8 @@ async def add_friend(
                     invite_message(user["username"], trip_name),
                     reply_markup=my_trips_kb(),
                 )
-            except Exception:
+            except Exception as e:
+                logger.exception(e)
                 pass
 
         else:
@@ -119,10 +126,12 @@ async def add_friend(
 
     except UserNotFoundError:
         await message.answer(ERROR_LEXICON_RU["UserNotFoundError"])
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -155,9 +164,11 @@ async def get_friend(
                 user["username"] == trip["username"],
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -176,7 +187,8 @@ async def pre_delete_friend(callback: CallbackQuery):
             LEXICON_RU["confirm_deletion"],
             reply_markup=confirm_friend_deletion_kb(int(data[3]), data[-1]),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.answer(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -197,9 +209,11 @@ async def finally_remove_friend(
             LEXICON_RU["deletion_done"],
             reply_markup=back_to_friends_kb(trip_id),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -215,7 +229,8 @@ async def cancel_friend_deletion(callback: CallbackQuery):
             LEXICON_RU["deletion_canceled"],
             reply_markup=back_to_friends_kb(int(data[2])),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -248,9 +263,11 @@ async def find_friends(
                 )
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -282,9 +299,11 @@ async def get_found_user(
                 user["username"] == trip["username"],
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -320,11 +339,14 @@ async def add_found_user(
                 invite_message(user["username"], trip_name),
                 reply_markup=my_trips_kb(),
             )
-        except Exception:
+        except Exception as e:
+            logger.exception(e)
             pass
     except UserNotFoundError:
         await callback.message.edit_text(ERROR_LEXICON_RU["UserNotFoundError"])
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])

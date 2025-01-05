@@ -68,7 +68,7 @@ async def get_weather_forecast(
 
             res += pre_res
 
-    except Exception:
-        raise ServiceConnectionError
+    except Exception as e:
+        raise ServiceConnectionError from e
 
     return res

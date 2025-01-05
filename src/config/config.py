@@ -9,7 +9,7 @@ from openrouteservice import Client
 __all__ = ["Config", "load_config"]
 
 
-@dataclass
+@dataclass(slots=True)
 class Bot:
     token: str
     cache: Cache
@@ -19,7 +19,7 @@ class Bot:
     geoapify: str
 
 
-@dataclass
+@dataclass(slots=True)
 class PostgresConfig:
     driver: str
     user: str
@@ -29,13 +29,13 @@ class PostgresConfig:
     database: str
 
 
-@dataclass
+@dataclass(slots=True)
 class RedisConfig:
     host: str
     port: int
 
 
-@dataclass
+@dataclass(slots=True)
 class Config:
     _instance = None
 

@@ -1,3 +1,4 @@
+import logging
 from datetime import date
 from datetime import datetime as dt
 
@@ -26,6 +27,7 @@ from src.lexicon import ERROR_LEXICON_RU, KB_LEXICON_RU, LEXICON_RU
 from src.services import create_trip_info
 from src.states import FSMTrip
 
+logger = logging.getLogger()
 trip_router = Router()
 config = load_config()
 semaphore = config.bot.semaphore
@@ -54,9 +56,11 @@ async def trips(
                 await paginator_kb(user, int(data[-1]), "trips", sessionmaker)
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -84,9 +88,11 @@ async def get_trip(
                 user["username"] == selected_trip_info["username"],
             ),
         )
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -101,7 +107,8 @@ async def new_trip(callback: CallbackQuery, user: dict, state: FSMContext):
         await callback.message.edit_text(LEXICON_RU["new_trip"])
         await state.update_data(username=user["username"])
         await state.set_state(FSMTrip.set_name)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -119,7 +126,8 @@ async def trip_name(message: Message, state: FSMContext):
         )
         await state.update_data(name=message.text)
         await state.set_state(FSMTrip.set_descriptipon)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -140,7 +148,8 @@ async def trip_description(message: Message, state: FSMContext):
             await state.update_data(description="")
 
         await state.set_state(FSMTrip.set_destination)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -182,7 +191,8 @@ async def trip_destination(message: Message, user: dict, state: FSMContext):
         await message.answer(ERROR_LEXICON_RU["IsStartPointError"])
     except GeocodingError:
         await message.answer(ERROR_LEXICON_RU["GeocodingError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -212,10 +222,12 @@ async def trip_dates(
         else:
             await message.answer(ERROR_LEXICON_RU["incorrect_data"])
 
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await message.answer(ERROR_LEXICON_RU["incorrect_data"])
 
 
@@ -235,7 +247,8 @@ async def edit_trip(callback: CallbackQuery, state: FSMContext):
         )
         await state.update_data(id=int(data[-1]))
         await state.set_state(FSMTrip.edit_name)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await callback.message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -257,7 +270,8 @@ async def edit_trip_name(message: Message, state: FSMContext):
             await state.update_data(name=message.text)
 
         await state.set_state(FSMTrip.edit_descriptipon)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
@@ -293,10 +307,12 @@ async def edit_trip_description(
         )
         await state.clear()
 
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await state.clear()
         await message.answer(ERROR_LEXICON_RU["InternalError"])
 
@@ -316,7 +332,8 @@ async def pre_delete_trip(callback: CallbackQuery):
             LEXICON_RU["confirm_deletion"],
             reply_markup=confirm_trip_deletion_kb(int(data[-1])),
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -343,9 +360,11 @@ async def finally_delete_trip(
             if await aos.path.exists(path):
                 await ash.rmtree(path, ignore_errors=True)
 
-    except DatabaseError:
+    except DatabaseError as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["DatabaseError"])
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
 
 
@@ -358,5 +377,6 @@ async def cancel_trip_deletion(callback: CallbackQuery):
         await callback.message.edit_text(
             LEXICON_RU["deletion_canceled"], reply_markup=my_trips_kb()
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await callback.message.edit_text(ERROR_LEXICON_RU["InternalError"])
