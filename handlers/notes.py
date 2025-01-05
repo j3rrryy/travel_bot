@@ -1,27 +1,26 @@
 from asyncio import BoundedSemaphore
 
 import aiofiles.os as aos
-from aiogram import Router, F, Bot
+from aiogram import Bot, F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import Message, CallbackQuery, FSInputFile
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from aiogram.types import CallbackQuery, FSInputFile, Message
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from states import FSMNote
-from errors import DatabaseError
 from config_data import Config, load_config
-from lexicon import LEXICON_RU, ERROR_LEXICON_RU
-from database import add_note_db, get_note_db, delete_note_db
+from database import add_note_db, delete_note_db, get_note_db
+from errors import DatabaseError
 from keyboards import (
-    paginator_kb,
-    private_kb,
+    back_to_notes_kb,
     base_note_kb,
     base_notes_kb,
     confirm_note_deletion_kb,
-    back_to_notes_kb,
+    paginator_kb,
+    private_kb,
 )
-
+from lexicon import ERROR_LEXICON_RU, LEXICON_RU
+from states import FSMNote
 
 note_router: Router = Router()
 config: Config = load_config()

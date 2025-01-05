@@ -1,14 +1,14 @@
 from aiogram import Router
 
 from middlewares import *
-from .users import *
+
+from .expenses import *
 from .friends import *
-from .trips import *
 from .locations import *
 from .notes import *
-from .expenses import *
+from .trips import *
+from .users import *
 from .utils import *
-
 
 main_router = Router()
 main_router.include_routers(

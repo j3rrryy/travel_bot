@@ -1,18 +1,17 @@
-from sqlalchemy import func
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.dialects.postgresql import VARCHAR, ARRAY
 from sqlalchemy import (
-    Column,
-    BigInteger,
-    Integer,
-    Float,
-    Boolean,
     JSON,
-    ForeignKey,
+    BigInteger,
+    Boolean,
+    Column,
     DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    func,
 )
-
+from sqlalchemy.dialects.postgresql import ARRAY, VARCHAR
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 

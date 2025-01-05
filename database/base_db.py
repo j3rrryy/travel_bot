@@ -1,8 +1,9 @@
 from rapidfuzz import fuzz, utils
-from sqlalchemy import select, or_, and_, not_, desc, func
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy import and_, desc, func, not_, or_, select
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from errors import DatabaseError
+
 from .models import *
 
 
@@ -46,7 +47,7 @@ async def get_items(
 
                         for trip in trips.scalars().all():
                             if user["username"] in trip.friends:
-                                res.append((f"\U0001F517 {trip.name}", trip.id))
+                                res.append((f"\U0001f517 {trip.name}", trip.id))
                             else:
                                 res.append((trip.name, trip.id))
 
@@ -66,7 +67,7 @@ async def get_items(
 
                         for note in notes.scalars().all():
                             if note.user_id != user["id"] and not note.is_private:
-                                res.append((f"\U0001F517 {note.name}", note.id))
+                                res.append((f"\U0001f517 {note.name}", note.id))
                             elif note.user_id == user["id"]:
                                 res.append((note.name, note.id))
 

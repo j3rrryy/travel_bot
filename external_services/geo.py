@@ -1,11 +1,9 @@
-import asyncio
-
-from cashews import Cache
-import plotly.io as pio
 import plotly.graph_objects as go
+import plotly.io as pio
 from aiohttp import ClientSession
-from geopy.geocoders import Nominatim
+from cashews import Cache
 from geopy.adapters import AioHTTPAdapter
+from geopy.geocoders import Nominatim
 from openrouteservice import convert
 from openrouteservice.directions import directions
 
@@ -16,7 +14,6 @@ from errors import (
     NoLocationsError,
     ServiceConnectionError,
 )
-
 
 config: Config = load_config()
 cache: Cache = config.tg_bot.cache
@@ -64,7 +61,6 @@ def get_route_photo(
     user_latitude: float,
     user_longitude: float,
     locations: list,
-    event: asyncio.Event,
 ) -> None:
     """
     Create a pic with trip route.
@@ -134,7 +130,6 @@ def get_route_photo(
         )
 
         pio.write_image(fig, f"./files/routes/route-{trip_id}.jpeg", format="jpeg")
-        event.set()
 
     except:
         raise NavigationError
@@ -167,7 +162,7 @@ async def get_sights_list(
         "lang": "ru",
         "apiKey": key,
     }
-    res = "\U0001F51D 10 достопримечательностей рядом:\n\n"
+    res = "\U0001f51d 10 достопримечательностей рядом:\n\n"
 
     try:
         async with ClientSession() as session:
@@ -176,8 +171,8 @@ async def get_sights_list(
 
         for sight in sights:
             pre_res = ""
-            pre_res += f"\U0001F3F7 Название: {sight['properties']['name']}\n"
-            pre_res += f"\U0001F4CD Адрес: {sight['properties']['address_line2']}\n\n"
+            pre_res += f"\U0001f3f7 Название: {sight['properties']['name']}\n"
+            pre_res += f"\U0001f4cd Адрес: {sight['properties']['address_line2']}\n\n"
             res += pre_res
 
     except:

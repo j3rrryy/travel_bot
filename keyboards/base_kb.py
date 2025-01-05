@@ -1,9 +1,9 @@
-from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from lexicon import KB_LEXICON_RU
 from database import get_items
+from lexicon import KB_LEXICON_RU
 
 
 async def paginator_kb(
@@ -221,25 +221,25 @@ async def paginator_kb(
     if page != 0 and pages != 0:
         kb_builder.row(
             InlineKeyboardButton(
-                text=f"\U00002B05 Страница {page}",
+                text=f"\U00002b05 Страница {page}",
                 callback_data=f"{page_type}{page - 1}",
             ),
             InlineKeyboardButton(
-                text=f"\U000027A1 Страница {page + 2}",
+                text=f"\U000027a1 Страница {page + 2}",
                 callback_data=f"{page_type}{page + 1}",
             ),
         )
     elif page != 0 and pages == 0:
         kb_builder.row(
             InlineKeyboardButton(
-                text=f"\U00002B05 Страница {page}",
+                text=f"\U00002b05 Страница {page}",
                 callback_data=f"{page_type}{page - 1}",
             ),
         )
     elif page == 0 and pages != 0:
         kb_builder.row(
             InlineKeyboardButton(
-                text=f"\U000027A1 Страница {page + 2}",
+                text=f"\U000027a1 Страница {page + 2}",
                 callback_data=f"{page_type}{page + 1}",
             ),
         )

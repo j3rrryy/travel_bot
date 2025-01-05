@@ -1,44 +1,43 @@
 from asyncio import sleep
 from random import choice
 
-from aiogram import Router, F, Bot
+from aiogram import Bot, F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import Message, CallbackQuery
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from aiogram.types import CallbackQuery, Message
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from states import FSMExpense
-from lexicon import LEXICON_RU, KB_LEXICON_RU, ERROR_LEXICON_RU
-from services import create_expense_info, debtor_message, create_debtor_info
-from keyboards import (
-    paginator_kb,
-    base_expenses_kb,
-    my_trips_kb,
-    base_expense_kb,
-    confirm_write_off_kb,
-    back_to_expense_kb,
-    back_to_expenses_kb,
-    leave_same_kb,
-    confirm_expense_deletion_kb,
-    play_kb,
-)
 from database import (
+    add_debtor_db,
     create_update_expense_db,
+    delete_expense_db,
     get_expense_db,
     get_user_db,
-    add_debtor_db,
-    delete_expense_db,
-    write_off_debt_db,
     loser_db,
+    write_off_debt_db,
 )
 from errors import (
     DatabaseError,
+    ServiceConnectionError,
     UserNotFoundError,
     UserNotInTripError,
-    ServiceConnectionError,
 )
-
+from keyboards import (
+    back_to_expense_kb,
+    back_to_expenses_kb,
+    base_expense_kb,
+    base_expenses_kb,
+    confirm_expense_deletion_kb,
+    confirm_write_off_kb,
+    leave_same_kb,
+    my_trips_kb,
+    paginator_kb,
+    play_kb,
+)
+from lexicon import ERROR_LEXICON_RU, KB_LEXICON_RU, LEXICON_RU
+from services import create_debtor_info, create_expense_info, debtor_message
+from states import FSMExpense
 
 expense_router: Router = Router()
 

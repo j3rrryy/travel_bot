@@ -1,7 +1,8 @@
-from sqlalchemy import update, delete
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy import delete, update
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from errors import DatabaseError
+
 from .models import Trip
 
 

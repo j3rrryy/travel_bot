@@ -1,40 +1,40 @@
 import asyncio
-from datetime import datetime as dt, date
+from datetime import date
+from datetime import datetime as dt
 
 import aiofiles.os as aos
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import Message, CallbackQuery, FSInputFile
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from aiogram.types import CallbackQuery, FSInputFile, Message
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from states import FSMLocation
-from services import create_location_info
 from config_data import Config, load_config
-from external_services import convert_coordinates
-from lexicon import LEXICON_RU, ERROR_LEXICON_RU
+from database import (
+    add_location_db,
+    delete_location_db,
+    get_location_db,
+    get_trip_db,
+)
 from errors import (
     DatabaseError,
     GeocodingError,
     InvalidDateError,
-    LocationExistsError,
     IsStartPointError,
+    LocationExistsError,
 )
-from database import (
-    get_trip_db,
-    add_location_db,
-    get_location_db,
-    delete_location_db,
-)
+from external_services import convert_coordinates
 from keyboards import (
-    paginator_kb,
+    back_to_locations_kb,
     base_location_kb,
     base_locations_kb,
     confirm_location_deletion_kb,
-    back_to_locations_kb,
+    paginator_kb,
 )
-
+from lexicon import ERROR_LEXICON_RU, LEXICON_RU
+from services import create_location_info
+from states import FSMLocation
 
 location_router: Router = Router()
 config: Config = load_config()

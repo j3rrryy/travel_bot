@@ -1,11 +1,11 @@
-from datetime import timedelta, date, datetime as dt
+from datetime import date, timedelta
+from datetime import datetime as dt
 
-from cashews import Cache
 from aiohttp import ClientSession
+from cashews import Cache
 
 from config_data import Config, load_config
-from errors import WeatherDateError, ServiceConnectionError
-
+from errors import ServiceConnectionError, WeatherDateError
 
 config: Config = load_config()
 cache: Cache = config.tg_bot.cache
@@ -60,12 +60,12 @@ async def get_weather_forecast(
             day_date = date(dt_decode.year, dt_decode.month, dt_decode.day)
 
             if start_dt <= day_date and day_date <= end_dt:
-                pre_res += f"\U0001F4C5 Дата: {day_date.strftime('%d.%m.%Y')}\n"
+                pre_res += f"\U0001f4c5 Дата: {day_date.strftime('%d.%m.%Y')}\n"
                 pre_res += (
-                    "\U0001F321 Макс. и мин. температура: " + f"{max_t} / {min_t} °C\n"
+                    "\U0001f321 Макс. и мин. температура: " + f"{max_t} / {min_t} °C\n"
                 )
-                pre_res += f"\U000026C8 Осадки: {precip} мм\n"
-                pre_res += f"\U0001F32C Макс. скорость ветра: {wind} м/с\n\n"
+                pre_res += f"\U000026c8 Осадки: {precip} мм\n"
+                pre_res += f"\U0001f32c Макс. скорость ветра: {wind} м/с\n\n"
 
             res += pre_res
 

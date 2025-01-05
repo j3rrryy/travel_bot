@@ -1,10 +1,10 @@
-from dataclasses import dataclass
 from asyncio import BoundedSemaphore
+from concurrent.futures import ProcessPoolExecutor
+from dataclasses import dataclass
 
-from environs import Env
 from cashews import Cache, cache
+from environs import Env
 from openrouteservice import Client
-
 
 __all__ = ["Config", "load_config"]
 
@@ -14,6 +14,7 @@ class TgBot:
     token: str
     cache: Cache
     semaphore: BoundedSemaphore
+    process_pool: ProcessPoolExecutor
     openrouteservice: Client
     geoapify: str
 
@@ -65,6 +66,7 @@ def load_config() -> Config:
             token=env("BOT_TOKEN"),
             cache=cache,
             semaphore=BoundedSemaphore(20),
+            process_pool=ProcessPoolExecutor(5),
             openrouteservice=Client(key=env("ORS_KEY")),
             geoapify=env("GA_KEY"),
         ),

@@ -1,31 +1,31 @@
 from asyncio import BoundedSemaphore
-from datetime import date, datetime as dt
+from datetime import date
+from datetime import datetime as dt
 
-import aioshutil as ash
 import aiofiles.os as aos
-from aiogram import Router, F
+import aioshutil as ash
+from aiogram import F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import Message, CallbackQuery
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from aiogram.types import CallbackQuery, Message
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from states import FSMTrip
-from services import create_trip_info
 from config_data import Config, load_config
-from external_services import convert_coordinates
-from lexicon import LEXICON_RU, KB_LEXICON_RU, ERROR_LEXICON_RU
+from database import create_update_trip, delete_trip_db, get_trip_db
 from errors import DatabaseError, GeocodingError, IsStartPointError
-from database import get_trip_db, create_update_trip, delete_trip_db
+from external_services import convert_coordinates
 from keyboards import (
+    confirm_trip_deletion_kb,
+    leave_blank_kb,
+    leave_same_kb,
+    my_trips_kb,
     paginator_kb,
     trip_options_kb,
-    leave_blank_kb,
-    my_trips_kb,
-    leave_same_kb,
-    confirm_trip_deletion_kb,
 )
-
+from lexicon import ERROR_LEXICON_RU, KB_LEXICON_RU, LEXICON_RU
+from services import create_trip_info
+from states import FSMTrip
 
 trip_router: Router = Router()
 config: Config = load_config()
@@ -204,9 +204,9 @@ async def trip_dates(
         if date(d1.year, d1.month, d1.day) >= date.today() and d2 > d1:
             data = await state.get_data()
             data["dates"] = [
-                    d1.strftime("%d.%m.%Y"),
-                    d2.strftime("%d.%m.%Y"),
-                ]
+                d1.strftime("%d.%m.%Y"),
+                d2.strftime("%d.%m.%Y"),
+            ]
             await create_update_trip(data, sessionmaker)
             await message.answer(LEXICON_RU["trip_created"], reply_markup=my_trips_kb())
             await state.clear()

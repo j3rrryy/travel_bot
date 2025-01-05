@@ -1,7 +1,8 @@
-from sqlalchemy import select, update, func
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy import func, select, update
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from errors import DatabaseError
+
 from .models import User
 
 

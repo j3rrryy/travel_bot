@@ -1,26 +1,25 @@
-from aiogram import Router, F, Bot
+from aiogram import Bot, F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import Message, CallbackQuery
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from aiogram.types import CallbackQuery, Message
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from states import FSMFriend
-from lexicon import LEXICON_RU, ERROR_LEXICON_RU
-from services import invite_message, create_profile
+from database import add_friend_db, get_trip_db, get_user_db, remove_friend_db
 from errors import DatabaseError, UserNotFoundError
-from database import get_trip_db, add_friend_db, get_user_db, remove_friend_db
 from keyboards import (
-    paginator_kb,
-    base_friend_kb,
-    base_friends_kb,
-    my_trips_kb,
-    confirm_friend_deletion_kb,
+    back_found_users_kb,
     back_to_friends_kb,
     base_found_user_kb,
-    back_found_users_kb,
+    base_friend_kb,
+    base_friends_kb,
+    confirm_friend_deletion_kb,
+    my_trips_kb,
+    paginator_kb,
 )
-
+from lexicon import ERROR_LEXICON_RU, LEXICON_RU
+from services import create_profile, invite_message
+from states import FSMFriend
 
 friend_router: Router = Router()
 

@@ -1,28 +1,27 @@
-from cashews import Cache
-from aiogram import Router, F
+from aiogram import F, Router
+from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import Message, CallbackQuery
-from aiogram.filters import Command, CommandStart, StateFilter
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from aiogram.types import CallbackQuery, Message
+from cashews import Cache
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from states import FSMSettings
-from services import create_profile
 from config_data import Config, load_config
 from database import create_update_user
 from errors import DatabaseError, GeocodingError
 from external_services import convert_coordinates
-from lexicon import LEXICON_RU, KB_LEXICON_RU, ERROR_LEXICON_RU, CURRENCY_DICT
 from keyboards import (
-    menu_kb,
-    set_location_kb,
-    leave_same_kb,
-    leave_blank_kb,
     edit_kb,
-    set_sex_kb,
+    leave_blank_kb,
+    leave_same_kb,
+    menu_kb,
     set_currency_kb,
+    set_location_kb,
+    set_sex_kb,
 )
-
+from lexicon import CURRENCY_DICT, ERROR_LEXICON_RU, KB_LEXICON_RU, LEXICON_RU
+from services import create_profile
+from states import FSMSettings
 
 user_router: Router = Router()
 config: Config = load_config()
@@ -72,9 +71,7 @@ async def profile_command(message: Message, user: dict | None, state: FSMContext
 
     try:
         if user:
-            await message.answer(
-                create_profile(user), reply_markup=edit_kb()
-            )
+            await message.answer(create_profile(user), reply_markup=edit_kb())
         else:
             await message.answer(ERROR_LEXICON_RU["no_profile"])
 
@@ -138,9 +135,7 @@ async def profile_location(message: Message, state: FSMContext):
         latitude = round(message.location.latitude, 3)
         longitude = round(message.location.longitude, 3)
 
-        res = await convert_coordinates(
-            latitude, longitude
-        )
+        res = await convert_coordinates(latitude, longitude)
 
         if res:
             country, city = res[0], res[1]

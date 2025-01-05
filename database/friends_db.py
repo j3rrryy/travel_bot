@@ -1,8 +1,9 @@
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from errors import DatabaseError, UserNotFoundError
-from .models import User, Trip
+
+from .models import Trip, User
 
 
 async def add_friend_db(

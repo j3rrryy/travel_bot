@@ -1,8 +1,9 @@
-from sqlalchemy import select, delete, update
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy import delete, select, update
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from errors import DatabaseError, UserNotFoundError, UserNotInTripError
-from .models import User, Trip, Expense
+
+from .models import Expense, Trip, User
 
 
 async def create_update_expense_db(

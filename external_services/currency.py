@@ -1,11 +1,10 @@
 import json
 
-from cashews import Cache
 from aiohttp import ClientSession
+from cashews import Cache
 
-from errors import ServiceConnectionError
 from config_data import Config, load_config
-
+from errors import ServiceConnectionError
 
 config: Config = load_config()
 cache: Cache = config.tg_bot.cache

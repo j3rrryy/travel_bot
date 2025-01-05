@@ -1,13 +1,12 @@
 import datetime
-from typing import Callable, Awaitable, Any
+from typing import Any, Awaitable, Callable
 
-from cashews import Cache
 from aiogram import BaseMiddleware
-from aiogram.types import TelegramObject, Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message, TelegramObject
+from cashews import Cache
 
 from config_data import Config, load_config
 from database import User, get_postgres_sessionmaker
-
 
 config: Config = load_config()
 cache: Cache = config.tg_bot.cache

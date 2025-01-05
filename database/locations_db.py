@@ -1,8 +1,9 @@
 from datetime import datetime as dt
 
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from errors import DatabaseError, InvalidDateError, LocationExistsError
+
 from .models import Trip
 
 

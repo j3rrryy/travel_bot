@@ -1,12 +1,12 @@
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from aiogram.types import (
-    ReplyKeyboardMarkup,
-    KeyboardButton,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
+    KeyboardButton,
+    ReplyKeyboardMarkup,
 )
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
-from lexicon import KB_LEXICON_RU, CURRENCY_DICT
+from lexicon import CURRENCY_DICT, KB_LEXICON_RU
 
 
 def set_sex_kb() -> InlineKeyboardMarkup:

@@ -1,43 +1,44 @@
 import asyncio
+from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime as dt
 
 import aiofiles.os as aos
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import Message, CallbackQuery, FSInputFile
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from aiogram.types import CallbackQuery, FSInputFile, Message
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from states import FSMCurrency
-from services import create_currency_info
 from config_data import Config, load_config
-from database import get_trip_db, get_location_db
-from lexicon import LEXICON_RU, ERROR_LEXICON_RU, CURRENCY_DICT
-from external_services import (
-    get_route_photo,
-    get_weather_forecast,
-    convert_currency,
-    get_sights_list,
-)
-from keyboards import (
-    base_location_kb,
-    back_to_location_kb,
-    back_to_locations_kb,
-    set_currency_kb,
-)
+from database import get_location_db, get_trip_db
 from errors import (
     DatabaseError,
     NavigationError,
     NoLocationsError,
-    WeatherDateError,
     ServiceConnectionError,
+    WeatherDateError,
 )
-
+from external_services import (
+    convert_currency,
+    get_route_photo,
+    get_sights_list,
+    get_weather_forecast,
+)
+from keyboards import (
+    back_to_location_kb,
+    back_to_locations_kb,
+    base_location_kb,
+    set_currency_kb,
+)
+from lexicon import CURRENCY_DICT, ERROR_LEXICON_RU, LEXICON_RU
+from services import create_currency_info
+from states import FSMCurrency
 
 utils_router: Router = Router()
 config: Config = load_config()
 semaphore: asyncio.BoundedSemaphore = config.tg_bot.semaphore
+process_pool: ProcessPoolExecutor = config.tg_bot.process_pool
 
 
 @utils_router.callback_query(
@@ -55,32 +56,24 @@ async def route(
 
     try:
         await callback.answer()
-        event = asyncio.Event()
         data = callback.data.split("-")
         trip_id = int(data[1])
         route_photo = FSInputFile(f"./files/routes/route-{trip_id}.jpeg")
         trip = await get_trip_db(trip_id, sessionmaker)
-        wait = False
 
         if not await aos.path.isfile(route_photo.path):
-            wait = True
             await callback.message.edit_text(LEXICON_RU["wait"])
-            await asyncio.to_thread(
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(
+                process_pool,
                 get_route_photo,
                 trip_id,
                 user["latitude"],
                 user["longitude"],
                 trip["locations"],
-                event,
             )
-        else:
-            event.set()
 
-        await event.wait()
-
-        if wait:
-            await callback.message.delete()
-
+        await callback.message.delete()
         await callback.message.answer_photo(
             route_photo,
             LEXICON_RU["route"],

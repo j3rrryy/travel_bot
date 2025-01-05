@@ -1,16 +1,15 @@
 import asyncio
 import logging
 
-from redis.asyncio import Redis
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.redis import RedisStorage
+from redis.asyncio import Redis
 
 from config_data import Config, load_config
 from database import get_postgres_sessionmaker
 from handlers import main_router
 from keyboards import set_main_menu
-
 
 logger = logging.getLogger(__name__)
 
