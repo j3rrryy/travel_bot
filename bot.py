@@ -14,7 +14,7 @@ from src.keyboards import set_main_menu
 logger = logging.getLogger(__name__)
 
 
-async def main() -> None:
+async def main():
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s | %(levelname)s | %(message)s",
