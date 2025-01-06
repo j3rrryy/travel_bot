@@ -1,12 +1,9 @@
 import json
 
 from aiohttp import ClientSession
+from cashews import cache
 
-from src.config import load_config
 from src.errors import ServiceConnectionError
-
-config = load_config()
-cache = config.bot.cache
 
 
 @cache(ttl="30m")

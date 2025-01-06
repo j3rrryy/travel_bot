@@ -3,6 +3,7 @@ import os
 import plotly.graph_objects as go
 import plotly.io as pio
 from aiohttp import ClientSession
+from cashews import cache
 from geopy.adapters import AioHTTPAdapter
 from geopy.geocoders import Nominatim
 from openrouteservice import convert
@@ -17,7 +18,6 @@ from src.errors import (
 )
 
 config = load_config()
-cache = config.bot.cache
 
 
 @cache(ttl="1h")

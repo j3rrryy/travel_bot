@@ -5,9 +5,9 @@ from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.types import CallbackQuery, Message
+from cashews import cache
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from src.config import load_config
 from src.database import create_update_user
 from src.errors import DatabaseError, GeocodingError
 from src.external_services import convert_coordinates
@@ -26,8 +26,6 @@ from src.states import FSMSettings
 
 logger = logging.getLogger()
 user_router = Router()
-config = load_config()
-cache = config.bot.cache
 
 
 @user_router.message(CommandStart(), StateFilter(default_state))

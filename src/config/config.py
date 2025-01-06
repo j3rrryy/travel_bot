@@ -2,7 +2,7 @@ from asyncio import BoundedSemaphore
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 
-from cashews import Cache, cache
+from cashews import cache
 from environs import Env
 from openrouteservice import Client
 
@@ -12,7 +12,6 @@ __all__ = ["Config", "load_config"]
 @dataclass(slots=True)
 class Bot:
     token: str
-    cache: Cache
     semaphore: BoundedSemaphore
     process_pool: ProcessPoolExecutor
     openrouteservice: Client
@@ -60,7 +59,6 @@ def load_config():
     return Config(
         bot=Bot(
             token=env("BOT_TOKEN"),
-            cache=cache,
             semaphore=BoundedSemaphore(20),
             process_pool=ProcessPoolExecutor(5),
             openrouteservice=Client(key=env("ORS_KEY")),

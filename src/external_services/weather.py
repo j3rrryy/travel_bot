@@ -2,12 +2,9 @@ from datetime import date, timedelta
 from datetime import datetime as dt
 
 from aiohttp import ClientSession
+from cashews import cache
 
-from src.config import load_config
 from src.errors import ServiceConnectionError, WeatherDateError
-
-config = load_config()
-cache = config.bot.cache
 
 
 @cache(ttl="6h")

@@ -2,12 +2,9 @@ from typing import Any, Awaitable, Callable
 
 from aiogram import BaseMiddleware
 from aiogram.types import CallbackQuery, Message, TelegramObject
+from cashews import cache
 
-from src.config import load_config
 from src.database import User, get_sessionmaker
-
-config = load_config()
-cache = config.bot.cache
 
 
 class AuthMiddleware(BaseMiddleware):
