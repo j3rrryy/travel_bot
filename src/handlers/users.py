@@ -203,7 +203,7 @@ async def profile_bio(
 
         data = await state.get_data()
         data["bio"] = bio
-        await cache.delete(f"user-{data["id"]}")
+        await cache.delete(f"user-{data['id']}")
         await create_update_user(data, sessionmaker)
         await message.answer(LEXICON_RU["settings_done"], reply_markup=menu_kb())
         await state.clear()

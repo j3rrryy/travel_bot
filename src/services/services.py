@@ -8,19 +8,19 @@ def create_profile(data: dict) -> str:
 
     res = ""
 
-    res += f"Telegram \U0001f194: {data["id"]}\n\n"
-    res += f"\U0001f464 Имя пользователя: @{data["username"]}\n\n"
+    res += f"Telegram \U0001f194: {data['id']}\n\n"
+    res += f"\U0001f464 Имя пользователя: @{data['username']}\n\n"
     emoji, sex = data["sex"].split()
     res += f"{emoji} Пол: {sex}\n\n"
-    res += f"\U0001f4c5 Возраст: {data["age"]}\n\n"
+    res += f"\U0001f4c5 Возраст: {data['age']}\n\n"
 
     if data["city"]:
-        res += f"\U0001f4cd Страна: {data["country"]}, город: {data["city"]}\n\n"
+        res += f"\U0001f4cd Страна: {data['country']}, город: {data['city']}\n\n"
     else:
-        res += f"\U0001f4cd Страна: {data["country"]}\n\n"
+        res += f"\U0001f4cd Страна: {data['country']}\n\n"
 
-    res += f"\U0001f4b0 Валюта: {data["currency"]}\n\n"
-    res += f"\U0001f4cb О себе: {data["bio"] if data["bio"] else " "}"
+    res += f"\U0001f4b0 Валюта: {data['currency']}\n\n"
+    res += f"\U0001f4cb О себе: {data['bio'] if data['bio'] else ' '}"
 
     return res
 
@@ -32,10 +32,10 @@ def create_trip_info(data: dict) -> str:
 
     res = ""
 
-    res += f"\U0001f194: {data["id"]}\n\n"
-    res += f"\U0001f464 Организатор: @{data["username"]}\n\n"
-    res += f"\U0001f3f7	Название путешествия: {data["name"]}\n\n"
-    res += f"\U0001f4cb	Краткое описание: {data["description"]}"
+    res += f"\U0001f194: {data['id']}\n\n"
+    res += f"\U0001f464 Организатор: @{data['username']}\n\n"
+    res += f"\U0001f3f7	Название путешествия: {data['name']}\n\n"
+    res += f"\U0001f4cb	Краткое описание: {data['description']}"
 
     return res
 
@@ -47,8 +47,8 @@ def create_location_info(data: dict) -> str:
 
     res = ""
 
-    res += f"\U0001f4cd Страна: {data["country"]}, город: {data["city"]}\n\n"
-    res += f"\U0001f4c5 Даты: {data["start_date"]}-{data["end_date"]}"
+    res += f"\U0001f4cd Страна: {data['country']}, город: {data['city']}\n\n"
+    res += f"\U0001f4c5 Даты: {data['start_date']}-{data['end_date']}"
 
     return res
 
@@ -60,9 +60,9 @@ def create_currency_info(data: dict) -> str:
 
     res = ""
 
-    res += f"\U0001f4b0 Результат конвертации {data["base_currency"]} \U00002192 {data["convert_to"]}\n\n"
-    res += f"\U0001f4c8 Курс: {data["rate"]}\n\n"
-    res += f"{data["input"]} {data["currency1"]} = {data["value"]} {data["currency2"]}"
+    res += f"\U0001f4b0 Результат конвертации {data['base_currency']} \U00002192 {data['convert_to']}\n\n"
+    res += f"\U0001f4c8 Курс: {data['rate']}\n\n"
+    res += f"{data['input']} {data['currency1']} = {data['value']} {data['currency2']}"
 
     return res
 
@@ -74,11 +74,11 @@ def create_expense_info(data: dict) -> str:
 
     res = ""
 
-    res += f"\U0001f194: {data["id"]}\n\n"
-    res += f"\U0001f3f7 Название траты: {data["name"]}\n\n"
-    res += f"\U0001f464 Кому должны: @{data["username"]}\n\n"
-    res += f"\U0001f4c5 Дата: {data["date"].strftime("%d.%m.%Y")}\n\n"
-    res += f"\U0001f9fe Общая сумма долга: {str(data["cost"]).replace(".", ",")} {data["currency"]}\n\n"
+    res += f"\U0001f194: {data['id']}\n\n"
+    res += f"\U0001f3f7 Название траты: {data['name']}\n\n"
+    res += f"\U0001f464 Кому должны: @{data['username']}\n\n"
+    res += f"\U0001f4c5 Дата: {data['date'].strftime('%d.%m.%Y')}\n\n"
+    res += f"\U0001f9fe Общая сумма долга: {str(data['cost']).replace('.', ',')} {data['currency']}\n\n"
     res += "\U0001f465 Должники:"
 
     return res
@@ -98,9 +98,9 @@ async def create_debtor_info(debtor_data: dict, expense_data: dict) -> str:
         converted = await convert_currency(
             cost, expense_data["currency"], debtor_data["currency"]
         )
-        res += f"\U0001f9fe Cумма долга: {converted["value"]} {debtor_data["currency"]}\n\n"
+        res += f"\U0001f9fe Cумма долга: {converted['value']} {debtor_data['currency']}\n\n"
     else:
-        res += f"\U0001f9fe Cумма долга: {cost} {expense_data["currency"]}\n\n"
+        res += f"\U0001f9fe Cумма долга: {cost} {expense_data['currency']}\n\n"
 
     return res
 

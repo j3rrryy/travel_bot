@@ -116,7 +116,7 @@ async def upload_note(
     try:
         data = await state.get_data()
         trip_id = data["trip_id"]
-        src = f"./files/{user["id"]}/{trip_id}/"
+        src = f"./files/{user['id']}/{trip_id}/"
         await aos.makedirs(src, exist_ok=True)
 
         async with semaphore:

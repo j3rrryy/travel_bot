@@ -355,7 +355,7 @@ async def finally_delete_trip(
         )
 
         async with semaphore:
-            path = f"./files/{user["id"]}/{trip_id}/"
+            path = f"./files/{user['id']}/{trip_id}/"
 
             if await aos.path.exists(path):
                 await ash.rmtree(path, ignore_errors=True)
